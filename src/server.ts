@@ -7,7 +7,7 @@ const PORT = 4000;
 const app = express();
 app.use(
   cors({
-    origin: true, // 모든 origin 허용 (테스트용)
+    origin: "https://jinu-sportfolioconsole.web.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -15,6 +15,8 @@ app.use(
   })
 );
 app.use(express.json());
+
+app.options("*", cors());
 
 app.get("/api/comments/:projectId", ((req: Request, res: Response) => {
   const projectId = req.params.projectId;
