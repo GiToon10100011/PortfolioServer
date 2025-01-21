@@ -7,7 +7,11 @@ const PORT = 4000;
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://jinu-sportfolioconsole.web.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://jinu-sportfolioconsole.web.app",
+      "https://jinuportfolio-server.com",
+    ],
     credentials: true,
   })
 );
