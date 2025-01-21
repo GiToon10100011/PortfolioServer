@@ -5,7 +5,12 @@ import { v4 as uuidv4 } from "uuid";
 const PORT = 4000;
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://jinu-sportfolioconsole.web.app"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.get("/api/comments/:projectId", ((req: Request, res: Response) => {
@@ -76,6 +81,6 @@ app.put("/api/comments/:projectId/:commentId", ((
   res.status(404).json({ message: "Comment not found" });
 }) as RequestHandler);
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
