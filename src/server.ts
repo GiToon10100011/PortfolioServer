@@ -10,13 +10,19 @@ app.use(
     origin: "https://jinu-sportfolioconsole.web.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    exposedHeaders: ["Access-Control-Allow-Origin"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json());
 
-app.options("*", cors());
+app.use((_, res, next) => {
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://jinu-sportfolioconsole.web.app"
+  );
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 app.get("/api/comments/:projectId", ((req: Request, res: Response) => {
   const projectId = req.params.projectId;
