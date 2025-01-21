@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 const PORT = 4000;
 
 const app = express();
+
+// CORS 설정 - 한 번만 설정
 app.use(
   cors({
     origin: "https://jinu-sportfolioconsole.web.app",
@@ -13,16 +15,8 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.use(express.json());
 
-app.use((_, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "https://jinu-sportfolioconsole.web.app"
-  );
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
+app.use(express.json());
 
 app.get("/api/comments/:projectId", ((req: Request, res: Response) => {
   const projectId = req.params.projectId;
