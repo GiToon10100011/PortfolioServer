@@ -7,10 +7,11 @@ const PORT = 4000;
 const app = express();
 app.use(
   cors({
-    origin: "https://jinu-sportfolioconsole.web.app",
+    origin: true, // 모든 origin 허용 (테스트용)
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    exposedHeaders: ["Access-Control-Allow-Origin"],
   })
 );
 app.use(express.json());
