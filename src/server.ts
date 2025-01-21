@@ -6,29 +6,40 @@ const PORT = 4000;
 
 const app = express();
 
-// CORS 설정 - 한 번만 설정
-app.use(
-  cors({
-    origin: "https://jinu-sportfolioconsole.web.app",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+const corsOptions = {
+  origin: "https://jinu-sportfolioconsole.web.app",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 200,
+};
+
+// 기본 CORS 설정
+app.use(cors(corsOptions));
+
+// 모든 라우트에 대해 CORS 프리플라이트 설정
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
-app.get("/api/comments/:projectId", ((req: Request, res: Response) => {
+// 각 라우트에 대해 명시적으로 CORS 설정
+app.get("/api/comments/:projectId", cors(corsOptions), ((
+  req: Request,
+  res: Response
+) => {
   const projectId = req.params.projectId;
   const head = commentsList.getProjectHead(projectId);
   res.json({ head });
 }) as RequestHandler);
 
-app.post("/api/comments/:projectId", ((req: Request, res: Response) => {
+app.post("/api/comments/:projectId", cors(corsOptions), ((
+  req: Request,
+  res: Response
+) => {
   const projectId = req.params.projectId;
   const newComment = {
     id: uuidv4(),
-    projectId, // Add projectId to the comment
+    projectId,
     ...req.body,
     createdAt: new Date().toLocaleDateString(),
   };
@@ -37,7 +48,7 @@ app.post("/api/comments/:projectId", ((req: Request, res: Response) => {
   res.json({ head: commentsList.getProjectHead(projectId) });
 }) as RequestHandler);
 
-app.delete("/api/comments/:projectId/:commentId", ((
+app.delete("/api/comments/:projectId/:commentId", cors(corsOptions), ((
   req: Request,
   res: Response
 ) => {
@@ -57,7 +68,7 @@ app.delete("/api/comments/:projectId/:commentId", ((
   res.status(404).json({ message: "Comment not found" });
 }) as RequestHandler);
 
-app.put("/api/comments/:projectId/:commentId", ((
+app.put("/api/comments/:projectId/:commentId", cors(corsOptions), ((
   req: Request,
   res: Response
 ) => {
@@ -71,9 +82,9 @@ app.put("/api/comments/:projectId/:commentId", ((
       const updatedComment = {
         ...current.data,
         ...updates,
-        id: commentId, // Preserve the original ID
-        projectId, // Preserve the project ID
-        createdAt: current.data.createdAt, // Preserve the original creation date
+        id: commentId,
+        projectId,
+        createdAt: current.data.createdAt,
       };
 
       commentsList.updateAt(projectId, index, updatedComment);
