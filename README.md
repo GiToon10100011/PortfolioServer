@@ -83,13 +83,89 @@ class CommentLinkedList {
 }
 ```
 
+- 재귀 함수를 활용한 댓글 목록 렌더링
+
+```typescript
+// Portfolio/src/components/comments/CommentsList.tsx
+const renderComments = (
+  current: INode | null,
+  depth: number = 0,
+  isLastNode: boolean = true
+): ReactNode => {
+  // 로딩 상태 처리
+  if (!current || isProjectLoading) {
+    // 로딩 상태 및 빈 댓글 처리 로직
+    // ...
+  }
+
+  if (!current) {
+    return (
+      <NoComments>
+        {CommentIcons.noComments()}
+        <p>
+          No Comments...{" "}
+          <span onClick={() => setIsModalOpen(true)}>Write One?</span>
+        </p>
+      </NoComments>
+    );
+  }
+
+  // 현재 댓글 노드 렌더링
+  const result = (
+    <AnimatePresence>
+      <CommentItem
+        key={current.data.id}
+        id={`comment-${current.data.id}`}
+        variants={CommentItemVariants}
+        custom={depth}
+      >
+        {/* 댓글 헤더 및 내용 UI */}
+        {/* ... */}
+        <CommentInfo>{current.data.content}</CommentInfo>
+      </CommentItem>
+
+      {/* 재귀적으로 다음 댓글 노드 렌더링 */}
+      {current.next && renderComments(current.next, depth + 1, false)}
+    </AnimatePresence>
+  );
+
+  // 마지막 노드 처리
+  if (!current.next && isLastNode) {
+    setIsProjectLoading(false);
+  }
+
+  return result;
+};
+```
+
 ### 5. 반응형 디자인
 
 - 모바일, 태블릿, 데스크톱 환경 지원
 - 디바이스별 최적화된 UI/UX 제공
 - 화면 크기에 따른 동적 레이아웃 조정
 
-### 6. 화면간 전환
+### 6. AnimatedOutlet 컴포넌트
+
+- 페이지 전환 시 부드러운 애니메이션 효과 제공
+
+```typescript
+// Portfolio/src/components/AnimatedOutlet.tsx
+const AnimatedOutlet = (): React.JSX.Element => {
+  const location = useLocation();
+  const element = useOutlet();
+  const error = useRouteError();
+
+  return (
+    <AnimatePresence mode="wait">
+      {isRouteErrorResponse(error) ? (
+        <NotFound key="error" />
+      ) : (
+        element && React.cloneElement(element, { key: location.pathname })
+      )}
+    </AnimatePresence>
+  );
+};
+```
 
 ## 📂 프로젝트 아키텍처
 
@@ -197,15 +273,14 @@ npm run dev
 ### 기술적 측면
 
 - **연결 리스트 자료구조 활용**: 방명록 시스템에 연결 리스트를 구현하여 효율적인 데이터 관리 방법을 학습했습니다.
+- **재귀적 렌더링 패턴**: 트리 구조의 데이터를 효율적으로 렌더링하는 재귀 함수
 - **애니메이션 최적화**: Framer Motion을 활용한 복잡한 애니메이션 구현과 성능 최적화 기법을 익혔습니다.
 - **상태 관리**: Zustand를 사용하여 전역 상태를 효율적으로 관리하는 방법을 배웠습니다.
-- **TypeScript 타입 안정성**: 복잡한 컴포넌트와 데이터 구조에서 TypeScript의 타입 시스템을 활용하는 방법을 익혔습니다.
 
 ### 디자인 측면
 
 - **콘솔 UI/UX 구현**: 게임 콘솔의 사용자 경험을 웹에서 구현하는 방법을 연구했습니다.
 - **반응형 디자인**: 다양한 디바이스에서 일관된 사용자 경험을 제공하기 위한 반응형 디자인 기법을 적용했습니다.
-- **애니메이션 효과**: 사용자 경험을 향상시키는 적절한 애니메이션 효과 적용 방법을 배웠습니다.
 
 ### 프로젝트 관리
 
